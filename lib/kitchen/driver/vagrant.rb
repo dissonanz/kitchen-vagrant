@@ -181,6 +181,16 @@ module Kitchen
         File.expand_path(config[:vagrantfile_erb], config[:kitchen_root])
       end
 
+      def set_ssh_state(state)
+        hash = vagrant_ssh_config
+
+        state[:hostname] = hash["HostName"]
+        state[:username] = hash["User"]
+        state[:ssh_key] = hash["IdentityFile"]
+        state[:port] = hash["Port"]
+        state[:proxy_command] = hash["ProxyCommand"] if hash["ProxyCommand"]
+      end
+
       def vagrant_ssh_config
         output = run("vagrant ssh-config", :live_stream => nil)
         lines = output.split("\n").map do |line|
